@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mäuseskelett AR</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@1.7.2/aframe/build/aframe-ar.min.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+        <!-- Marker für das Mäuseskelett -->
+        <a-marker type="pattern" url="marker.patt">
+
+            <!-- Interaktive Knochenbereiche -->
+            <a-entity id="schaedel" geometry="primitive: sphere; radius: 0.05" position="0 0.5 0" material="color: red; opacity: 0.3"></a-entity>
+            <a-text id="schaedel-text" value="Schädel" position="0 0.6 0" scale="1 1 1" color="red" visible="false"></a-text>
+
+            <a-entity id="rippen" geometry="primitive: sphere; radius: 0.05" position="0 0.3 0" material="color: blue; opacity: 0.3"></a-entity>
+            <a-text id="rippen-text" value="Rippen" position="0 0.4 0" scale="1 1 1" color="blue" visible="false"></a-text>
+
+            <a-entity id="wirbelsaeule" geometry="primitive: sphere; radius: 0.05" position="0 0.1 0" material="color: green; opacity: 0.3"></a-entity>
+            <a-text id="wirbelsaeule-text" value="Wirbelsäule" position="0 0.2 0" scale="1 1 1" color="green" visible="false"></a-text>
+
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        // Funktion zur Anzeige des Knochen-Namens nach Klick
+        function setupClickEvent(entityId, textId) {
+            document.querySelector(entityId).addEventListener('click', function () {
+                let textEntity = document.querySelector(textId);
+                textEntity.setAttribute('visible', !textEntity.getAttribute('visible'));
+            });
+        }
+
+        // Click-Events für jeden Knochen hinzufügen
+        setupClickEvent("#schaedel", "#schaedel-text");
+        setupClickEvent("#rippen", "#rippen-text");
+        setupClickEvent("#wirbelsaeule", "#wirbelsaeule-text");
+    </script>
+
+</body>
+</html>
