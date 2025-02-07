@@ -19,16 +19,23 @@
                 return;
             }
 
-            const session = await navigator.xr.requestSession("immersive-ar", {
-                requiredFeatures: ["image-tracking"],
-                trackedImages: [{ url: "marker_mausskelett.png", widthInMeters: 0.2 }]
-            });
+            try {
+                const session = await navigator.xr.requestSession("immersive-ar", {
+                    requiredFeatures: ["camera-access", "image-tracking"],
+                    trackedImages: [{ url: "marker_mausskelett.png", widthInMeters: 0.2 }]
+                });
 
-            session.addEventListener("select", (event) => {
-                let x = event.inputSource.targetRay.origin.x;
-                let y = event.inputSource.targetRay.origin.y;
-                detectBone(x, y);
-            });
+                alert("WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
+
+                session.addEventListener("select", (event) => {
+                    let x = event.inputSource.targetRay.origin.x;
+                    let y = event.inputSource.targetRay.origin.y;
+                    detectBone(x, y);
+                });
+            } catch (error) {
+                console.error("Fehler beim Starten von WebXR:", error);
+                alert("Fehler beim Starten von WebXR: " + error.message);
+            }
         }
 
         function detectBone(x, y) {
@@ -60,7 +67,10 @@
             document.body.appendChild(infoBox);
         }
 
-        window.onload = initWebXR;
+        window.onload = function() {
+            console.log("WebXR wird initialisiert...");
+            initWebXR();
+        };
     </script>
 </head>
 <body style="margin: 0; overflow: hidden;">
