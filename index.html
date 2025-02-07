@@ -9,8 +9,22 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
 <a-scene embedded arjs>
-    <a-marker preset="hiro">
-        <a-text value="Test erfolgreich!" position="0 0.5 0" scale="2 2 2" color="red"></a-text>
+    <!-- Marker für das Mäuseskelett -->
+    <a-marker type="pattern" url="marker.patt">
+
+        <!-- Unsichtbare Hotspots über bestimmte Knochen -->
+        <a-entity id="schaedel" geometry="primitive: sphere; radius: 0.05" position="0 0.5 0"
+                  material="color: red; opacity: 0.0"></a-entity>
+        <a-text id="schaedel-text" value="Schädel" position="0 0.6 0" scale="1 1 1" color="red" visible="false"></a-text>
+
+        <a-entity id="rippen" geometry="primitive: sphere; radius: 0.05" position="0 0.3 0"
+                  material="color: blue; opacity: 0.0"></a-entity>
+        <a-text id="rippen-text" value="Rippen" position="0 0.4 0" scale="1 1 1" color="blue" visible="false"></a-text>
+
+        <a-entity id="wirbelsaeule" geometry="primitive: sphere; radius: 0.05" position="0 0.1 0"
+                  material="color: green; opacity: 0.0"></a-entity>
+        <a-text id="wirbelsaeule-text" value="Wirbelsäule" position="0 0.2 0" scale="1 1 1" color="green" visible="false"></a-text>
+
     </a-marker>
     <a-entity camera></a-entity>
 </a-scene>
