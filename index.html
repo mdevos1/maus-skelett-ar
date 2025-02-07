@@ -13,7 +13,7 @@
             { name: "Rechter Arm", x: 0.7, y: 0.4 }
         ];
 
-        async function initWebXR() {
+        async function startWebXR() {
             if (!navigator.xr) {
                 alert("WebXR wird von deinem Gerät nicht unterstützt.");
                 return;
@@ -26,6 +26,7 @@
                 });
 
                 alert("WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
+                document.getElementById("startButton").style.display = "none";
 
                 session.addEventListener("select", (event) => {
                     let x = event.inputSource.targetRay.origin.x;
@@ -40,7 +41,7 @@
 
         function detectBone(x, y) {
             let closestBone = null;
-            let minDistance = 0.1; // Maximaler Abstand zum Erkennen
+            let minDistance = 0.1;
 
             bones.forEach(bone => {
                 let distance = Math.sqrt(Math.pow(bone.x - x, 2) + Math.pow(bone.y - y, 2));
@@ -66,14 +67,10 @@
             infoBox.style.border = "1px solid black";
             document.body.appendChild(infoBox);
         }
-
-        window.onload = function() {
-            console.log("WebXR wird initialisiert...");
-            initWebXR();
-        };
     </script>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <h1 style="text-align: center;">Mäuseskelett WebXR</h1>
+<body style="margin: 0; overflow: hidden; text-align: center;">
+    <h1>Mäuseskelett WebXR</h1>
+    <button id="startButton" onclick="startWebXR()" style="padding: 10px; font-size: 16px;">WebXR starten</button>
 </body>
 </html>
