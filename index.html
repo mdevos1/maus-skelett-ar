@@ -25,8 +25,15 @@
             }
 
             try {
+                const supportedFeatures = await navigator.xr.isSessionSupported("immersive-ar");
+                if (!supportedFeatures) {
+                    alert("Dein Gerät unterstützt kein AR in WebXR.");
+                    return;
+                }
+
                 const session = await navigator.xr.requestSession("immersive-ar", {
-                    optionalFeatures: ["local-floor", "bounded-floor"] // Entfernt nicht unterstützte requiredFeatures
+                    optionalFeatures: ["hit-test", "dom-overlay"],
+                    domOverlay: { root: document.body }
                 });
 
                 alert("WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
