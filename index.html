@@ -4,40 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mäuseskelett WebXR</title>
-    <script src="https://immersive-web.github.io/webxr-samples/js/image-tracking.js"></script>
-</head>
-<body style="margin: 0; overflow: hidden;">
-    <canvas id="xrCanvas"></canvas>
     <script>
-        if (navigator.xr) {
-            navigator.xr.requestSession('immersive-ar', {
-                requiredFeatures: ['image-tracking'],
-                trackedImages: [{
-                    url: 'marker_mausskelett.png', 
-                    widthInMeters: 0.2 
-                }]
-            }).then(session => {
-                document.body.appendChild(session.domOverlay);
-                session.addEventListener('select', (event) => {
-                    let hitTest = event.frame.getHitTestResults(session);
-                    if (hitTest.length > 0) {
-                        let hitPose = hitTest[0].getPose();
-                        showBoneInfo(hitPose.transform.position);
-                    }
-                });
+        let bones = [
+            { name: "Schädel", x: 0.5, y: 0.2 },
+            { name: "Rippen", x: 0.5, y: 0.5 },
+            { name: "Wirbelsäule", x: 0.5, y: 0.7 },
+            { name: "Linker Arm", x: 0.3, y: 0.4 },
+            { name: "Rechter Arm", x: 0.7, y: 0.4 }
+        ];
+
+        async function initWebXR() {
+            if (!navigator.xr) {
+                alert("WebXR wird von deinem Gerät nicht unterstützt.");
+                return;
+            }
+
+            const session = await navigator.xr.requestSession("immersive-ar", {
+                requiredFeatures: ["image-tracking"],
+                trackedImages: [{ url: "marker_mausskelett.png", widthInMeters: 0.2 }]
+            });
+
+            session.addEventListener("select", (event) => {
+                let x = event.inputSource.targetRay.origin.x;
+                let y = event.inputSource.targetRay.origin.y;
+                detectBone(x, y);
             });
         }
-        
-        function showBoneInfo(position) {
-            let infoBox = document.createElement('div');
-            infoBox.innerText = "Knochen erkannt!";
-            infoBox.style.position = 'absolute';
-            infoBox.style.top = position.y + 'px';
-            infoBox.style.left = position.x + 'px';
-            infoBox.style.background = 'white';
-            infoBox.style.padding = '10px';
+
+        function detectBone(x, y) {
+            let closestBone = null;
+            let minDistance = 0.1; // Maximaler Abstand zum Erkennen
+
+            bones.forEach(bone => {
+                let distance = Math.sqrt(Math.pow(bone.x - x, 2) + Math.pow(bone.y - y, 2));
+                if (distance < minDistance) {
+                    closestBone = bone;
+                    minDistance = distance;
+                }
+            });
+
+            if (closestBone) {
+                showBoneInfo(closestBone.name, x, y);
+            }
+        }
+
+        function showBoneInfo(name, x, y) {
+            let infoBox = document.createElement("div");
+            infoBox.innerText = name;
+            infoBox.style.position = "absolute";
+            infoBox.style.top = (y * window.innerHeight) + "px";
+            infoBox.style.left = (x * window.innerWidth) + "px";
+            infoBox.style.background = "white";
+            infoBox.style.padding = "10px";
+            infoBox.style.border = "1px solid black";
             document.body.appendChild(infoBox);
         }
+
+        window.onload = initWebXR;
     </script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <h1 style="text-align: center;">Mäuseskelett WebXR</h1>
 </body>
 </html>
