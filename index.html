@@ -25,20 +25,31 @@
             }
 
             try {
-                const arSupported = await navigator.xr.isSessionSupported("immersive-ar");
-                if (!arSupported) {
-                    alert("Dein Gerät unterstützt kein immersives AR in WebXR. Wechsle zu Inline-Modus.");
-                    startInlineWebXR();
-                    return;
-                }
+                const supportsImmersiveAR = await navigator.xr.isSessionSupported("immersive-ar");
+                const supportsInline = await navigator.xr.isSessionSupported("inline");
 
-                const session = await navigator.xr.requestSession("immersive-ar", {
-                    optionalFeatures: [] // Entfernt nicht unterstützte Features
+                if (supportsImmersiveAR) {
+                    await startXRSession("immersive-ar");
+                } else if (supportsInline) {
+                    alert("Immersive AR nicht verfügbar. Wechsle zu Inline-Modus.");
+                    await startXRSession("inline");
+                } else {
+                    alert("Kein unterstützter WebXR-Modus verfügbar.");
+                }
+            } catch (error) {
+                console.error("Fehler beim Starten von WebXR:", error);
+                alert("Fehler beim Starten von WebXR: " + error.message);
+            }
+        }
+
+        async function startXRSession(mode) {
+            try {
+                const session = await navigator.xr.requestSession(mode, {
+                    optionalFeatures: []
                 });
 
-                alert("WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
+                alert(mode + " WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
                 document.getElementById("startButton").style.display = "none";
-
                 session.addEventListener("select", (event) => {
                     if (event.inputSource.targetRay && event.inputSource.targetRay.origin) {
                         let x = event.inputSource.targetRay.origin.x || 0;
@@ -47,19 +58,8 @@
                     }
                 });
             } catch (error) {
-                console.error("Fehler beim Starten von WebXR:", error);
-                alert("Fehler beim Starten von WebXR: " + error.message);
-            }
-        }
-
-        async function startInlineWebXR() {
-            try {
-                const session = await navigator.xr.requestSession("inline", {});
-                alert("Inline-WebXR gestartet als Fallback.");
-                document.getElementById("startButton").style.display = "none";
-            } catch (error) {
-                console.error("Fehler beim Starten von Inline-WebXR:", error);
-                alert("Fehler beim Starten von Inline-WebXR: " + error.message);
+                console.error("Fehler beim Starten von " + mode + " WebXR:", error);
+                alert("Fehler beim Starten von " + mode + " WebXR: " + error.message);
             }
         }
 
