@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mäuseskelett WebXR</title>
+    <script src="https://immersive-web.github.io/webxr-polyfill/build/webxr-polyfill.js"></script>
     <script>
+        var polyfill = new WebXRPolyfill();
+
         let bones = [
             { name: "Schädel", x: 0.5, y: 0.2 },
             { name: "Rippen", x: 0.5, y: 0.5 },
