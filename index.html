@@ -8,13 +8,15 @@
     <script>
         var polyfill = new WebXRPolyfill();
 
-        let bones = [
-            { name: "Schädel", x: 0.5, y: 0.2 },
-            { name: "Rippen", x: 0.5, y: 0.5 },
-            { name: "Wirbelsäule", x: 0.5, y: 0.7 },
-            { name: "Linker Arm", x: 0.3, y: 0.4 },
-            { name: "Rechter Arm", x: 0.7, y: 0.4 }
-        ];
+        if (typeof window.bones === 'undefined') {
+            window.bones = [
+                { name: "Schädel", x: 0.5, y: 0.2 },
+                { name: "Rippen", x: 0.5, y: 0.5 },
+                { name: "Wirbelsäule", x: 0.5, y: 0.7 },
+                { name: "Linker Arm", x: 0.3, y: 0.4 },
+                { name: "Rechter Arm", x: 0.7, y: 0.4 }
+            ];
+        }
 
         async function startWebXR() {
             if (!navigator.xr) {
@@ -32,9 +34,11 @@
                 document.getElementById("startButton").style.display = "none";
 
                 session.addEventListener("select", (event) => {
-                    let x = event.inputSource.targetRay.origin.x;
-                    let y = event.inputSource.targetRay.origin.y;
-                    detectBone(x, y);
+                    if (event.inputSource.targetRay && event.inputSource.targetRay.origin) {
+                        let x = event.inputSource.targetRay.origin.x || 0;
+                        let y = event.inputSource.targetRay.origin.y || 0;
+                        detectBone(x, y);
+                    }
                 });
             } catch (error) {
                 console.error("Fehler beim Starten von WebXR:", error);
@@ -46,7 +50,7 @@
             let closestBone = null;
             let minDistance = 0.1;
 
-            bones.forEach(bone => {
+            window.bones.forEach(bone => {
                 let distance = Math.sqrt(Math.pow(bone.x - x, 2) + Math.pow(bone.y - y, 2));
                 if (distance < minDistance) {
                     closestBone = bone;
