@@ -25,15 +25,15 @@
             }
 
             try {
-                const supportedFeatures = await navigator.xr.isSessionSupported("immersive-ar");
-                if (!supportedFeatures) {
-                    alert("Dein Gerät unterstützt kein AR in WebXR.");
+                const arSupported = await navigator.xr.isSessionSupported("immersive-ar");
+                if (!arSupported) {
+                    alert("Dein Gerät unterstützt kein immersives AR in WebXR. Wechsle zu Inline-Modus.");
+                    startInlineWebXR();
                     return;
                 }
 
                 const session = await navigator.xr.requestSession("immersive-ar", {
-                    optionalFeatures: ["hit-test", "dom-overlay"],
-                    domOverlay: { root: document.body }
+                    optionalFeatures: [] // Entfernt nicht unterstützte Features
                 });
 
                 alert("WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
@@ -49,6 +49,17 @@
             } catch (error) {
                 console.error("Fehler beim Starten von WebXR:", error);
                 alert("Fehler beim Starten von WebXR: " + error.message);
+            }
+        }
+
+        async function startInlineWebXR() {
+            try {
+                const session = await navigator.xr.requestSession("inline", {});
+                alert("Inline-WebXR gestartet als Fallback.");
+                document.getElementById("startButton").style.display = "none";
+            } catch (error) {
+                console.error("Fehler beim Starten von Inline-WebXR:", error);
+                alert("Fehler beim Starten von Inline-WebXR: " + error.message);
             }
         }
 
