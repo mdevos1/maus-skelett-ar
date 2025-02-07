@@ -26,8 +26,7 @@
 
             try {
                 const session = await navigator.xr.requestSession("immersive-ar", {
-                    requiredFeatures: ["camera-access", "image-tracking"],
-                    trackedImages: [{ url: "marker_mausskelett.png", widthInMeters: 0.2 }]
+                    optionalFeatures: ["local-floor", "bounded-floor"] // Entfernt nicht unterstützte requiredFeatures
                 });
 
                 alert("WebXR-Session gestartet. Halte dein Gerät auf das Bild!");
